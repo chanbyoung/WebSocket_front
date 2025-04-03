@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import WebSocketService from '../services/WebSocketService.js';
 import ChatMessageList from './ChatMessageList';
 import ChatInput from './ChatInput';
+import ApiService from '../services/ApiService.js';
 
 function ChatRoom({ user, roomId }) {
   const [messages, setMessages] = useState([]);
@@ -9,16 +10,23 @@ function ChatRoom({ user, roomId }) {
   const wsServiceRef = useRef(null); // ✅ WebSocketService 인스턴스를 참조로 보관
 
   useEffect(() => {
+    // 1. 기존 메시지 먼저 불러오기
+    ApiService.get(`/api/chatRoom/${roomId}`)
+    .then((res) => {
+      setMessages(res.data.messages); 
+    });
+  
+    // 2. WebSocket 연결
     const wsService = new WebSocketService({
       roomId,
       onMessageReceived: (msg) => setMessages((prev) => [...prev, msg]),
       onConnect: () => setWsConnected(true),
-      onDisconnect: () => setWsConnected(false)
+      onDisconnect: () => setWsConnected(false),
     });
-
+  
     wsService.connect();
     wsServiceRef.current = wsService;
-
+  
     return () => wsService.disconnect();
   }, [roomId]);
 
