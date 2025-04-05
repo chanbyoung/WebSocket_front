@@ -59,7 +59,6 @@ const loadPreviousMessages = useCallback(async () => {
 
     const newMessages = res.data.messages;
 
-    // 만약 백엔드가 오래된 순(ASC)으로 준다면 reverse 필수
     const reversedMessages = newMessages.reverse();
 
     // 위에 붙이기

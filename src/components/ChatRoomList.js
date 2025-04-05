@@ -1,10 +1,12 @@
 // src/components/ChatRoomList.js
 import React, { useEffect, useState } from 'react';
 import ApiService from '../services/ApiService';
+import { useNavigate } from 'react-router-dom';
 
-function ChatRoomList({ onEnterRoom }) {
+function ChatRoomList() {
   const [rooms, setRooms] = useState([]);
   const [newRoomName, setNewRoomName] = useState('');
+  const navigate = useNavigate(); // ← URL 이동용
 
   const fetchRooms = async () => {
     try {
@@ -33,6 +35,10 @@ function ChatRoomList({ onEnterRoom }) {
     }
   };
 
+  const handleEnterRoom = (roomId) => {
+    navigate(`/rooms/${roomId}`); // ← URL 변경
+  };
+
   return (
     <div>
       <h2>채팅방 목록</h2>
@@ -51,7 +57,7 @@ function ChatRoomList({ onEnterRoom }) {
         {rooms.map((room) => (
           <li key={room.id}>
             {room.name}
-            <button onClick={() => onEnterRoom(room.id)}>입장</button>
+            <button onClick={() => handleEnterRoom(room.id)}>입장</button>
           </li>
         ))}
       </ul>
